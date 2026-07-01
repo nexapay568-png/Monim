@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melcom Ghana – Careers &amp; Recruitment</title>
+  <link rel="icon" type="image/png" href="melcom.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --purple: #3b1f82; --purple-dark: #2a1560; --purple-light: #5c3bba;
+      --red: #e31837; --gold: #d4820a; --gray-bg: #f4f4f4;
+      --border: #e0e0e0; --text: #222; --text-light: #666;
+      --white: #ffffff; --success: #1a7f3c;
+      --mtn-yellow: #ffcb00; --voda-red: #e60000; --airtel-red: #ed1b24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); }
+
+    .top-bar { background: var(--purple); color: var(--white); text-align: center; font-size: 13px; padding: 8px 16px; line-height: 1.6; }
+    .top-bar a { color: var(--white); text-decoration: none; font-weight: 600; }
+
+    .header { background: var(--white); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+    .logo-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .logo-img { height: 44px; object-fit: contain; }
+    .logo-fallback { font-size: 26px; font-weight: 900; color: var(--purple); letter-spacing: -1px; display: none; align-items: center; gap: 4px; }
+    .header-icons { display: flex; align-items: center; gap: 18px; color: var(--text); cursor: pointer; }
+
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1999; display: none; opacity: 0; transition: opacity .3s; }
+    .drawer-overlay.open { display: block; opacity: 1; }
+    .drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--white); z-index: 2000; overflow-y: auto; transition: left .35s cubic-bezier(.4,0,.2,1); }
+    .drawer.open { left: 0; }
+    .drawer-header { padding: 18px 20px; display: flex; justify-content: flex-end; border-bottom: 1px solid var(--border); }
+    .drawer-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 600; letter-spacing: .5px; cursor: pointer; text-transform: uppercase; transition: background .15s; }
+    .drawer-item:hover { background: #f5f0ff; }
+    .drawer-item.highlight { color: var(--purple); }
+    .drawer-item.external { color: var(--red); }
+
+    .page { display: none; animation: fadeSlide .4s ease; }
+    .page.active { display: block; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero { background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 60%, #7b5cd6 100%); color: var(--white); text-align: center; padding: 48px 20px 40px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .hero h1 { font-size: 28px; font-weight: 900; margin-bottom: 10px; position: relative; }
+    .hero p { font-size: 15px; opacity: .9; max-width: 500px; margin: 0 auto 24px; position: relative; }
+    .hero-stats { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; position: relative; }
+    .stat-box { background: rgba(255,255,255,.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 14px 22px; text-align: center; }
+    .stat-box .num { font-size: 32px; font-weight: 900; line-height: 1; }
+    .stat-box .lbl { font-size: 12px; opacity: .85; margin-top: 4px; }
+
+    .notice-strip { background: #fff8e1; border-left: 4px solid var(--gold); padding: 12px 20px; font-size: 13px; color: #555; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .notice-strip b { color: var(--text); }
+
+    .section-hdr { background: var(--purple); color: var(--white); padding: 14px 20px; font-size: 17px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .section-hdr .badge { background: var(--red); color: var(--white); font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+
+    .jobs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
+    @media (max-width: 480px) { .jobs-grid { grid-template-columns: 1fr; } }
+    .job-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: transform .2s, box-shadow .2s; position: relative; }
+    .job-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(59,31,130,.15); }
+    .dept-tag { display: inline-block; background: #ede8ff; color: var(--purple); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-bottom: 8px; }
+    .job-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; }
+    .job-salary { color: var(--success); font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .job-meta { font-size: 11px; color: var(--text-light); margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+    .btn-apply { display: block; width: 100%; background: var(--purple); color: var(--white); border: none; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .2s; text-align: center; }
+    .btn-apply:hover { background: var(--purple-dark); }
+    .hot-badge { position: absolute; top: -1px; right: -1px; background: var(--red); color: var(--white); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 0 8px 0 8px; letter-spacing: .5px; }
+
+    .flow-wrap { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    .progress-bar-wrap { margin-bottom: 28px; }
+    .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px; color: var(--text-light); }
+    .progress-labels span.active { color: var(--purple); font-weight: 700; }
+    .progress-track { height: 6px; background: #ddd; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--purple-light)); border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+    .step-heading { margin-bottom: 20px; }
+    .step-heading h2 { font-size: 20px; font-weight: 800; color: var(--purple); display: flex; align-items: center; gap: 8px; }
+    .step-heading p { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 7px; padding: 12px 14px; font-size: 14px; outline: none; transition: border-color .2s; background: var(--white); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--purple); }
+    .form-group .err { font-size: 12px; color: var(--red); margin-top: 4px; display: none; }
+    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea { border-color: var(--red); }
+    .form-group.invalid .err { display: block; }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    .btn-primary { background: var(--purple); color: var(--white); border: none; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: background .2s, transform .1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary:hover { background: var(--purple-dark); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { background: #999; cursor: not-allowed; }
+    .btn-back { background: transparent; color: var(--purple); border: 2px solid var(--purple); padding: 13px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; transition: background .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-back:hover { background: #ede8ff; }
+    .form-group.valid input, .form-group.valid select, .form-group.valid textarea { border-color: var(--success) !important; }
+    .form-group.valid .err { display: block !important; color: var(--success) !important; }
+
+    .info-box { background: #f0f4ff; border: 1px solid #c5d1ff; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; }
+    .info-box strong { color: var(--purple); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 14px; }
+
+    .payment-box { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .amount-display { background: linear-gradient(135deg, var(--purple), var(--purple-light)); color: var(--white); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    .amount-display .amount { font-size: 40px; font-weight: 900; line-height: 1; }
+    .amount-display .curr { font-size: 14px; opacity: .8; margin-top: 4px; }
+
+    .net-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-top: 6px; }
+    .net-badge.mtn    { background: var(--mtn-yellow); color: #000; }
+    .net-badge.voda   { background: var(--voda-red);   color: #fff; }
+    .net-badge.airtel { background: var(--airtel-red); color: #fff; }
+    .net-badge.unknown { background: #eee; color: #666; }
+
+    .pay-error-box { background: #fff5f5; border: 1.5px solid var(--red); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: var(--red); display: none; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .pay-error-box.show { display: flex; }
+
+    .secure-badge { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--text-light); margin: 12px 0 0; }
+
+    .spinner-overlay { position: fixed; inset: 0; background: rgba(255,255,255,.93); display: none; align-items: center; justify-content: center; flex-direction: column; z-index: 9999; gap: 16px; }
+    .spinner-overlay.show { display: flex; }
+    .spinner { width: 52px; height: 52px; border: 5px solid #ddd; border-top-color: var(--purple); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner-sub { font-size: 13px; color: var(--text-light); max-width: 280px; text-align: center; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: var(--white); padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 8888; transition: transform .35s cubic-bezier(.4,0,.2,1); white-space: nowrap; max-width: 92vw; text-align: center; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--success); }
+    .toast.error   { background: var(--red); }
+    .toast.info    { background: var(--purple); }
+
+    .success-wrap { max-width: 480px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+    .success-icon { width: 90px; height: 90px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: pop .5s cubic-bezier(.4,0,.2,1); }
+    @keyframes pop { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+    .success-wrap h2 { font-size: 24px; font-weight: 900; color: var(--purple); margin-bottom: 12px; }
+    .success-wrap p { font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 8px; }
+    .ref-box { background: var(--gray-bg); border: 1.5px dashed var(--purple); border-radius: 8px; padding: 14px; margin: 20px 0; font-size: 13px; }
+    .ref-box b { color: var(--purple); font-size: 16px; }
+    .steps-list { text-align: left; background: var(--white); border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+    .steps-list li { font-size: 13px; color: var(--text); line-height: 1.9; list-style: none; padding-left: 22px; position: relative; }
+    .steps-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; }
+
+    .status-wrap { max-width: 440px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+    .status-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+
+    .job-detail-wrap { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+    .job-detail-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 16px; }
+    .job-detail-card h2 { font-size: 20px; font-weight: 800; color: var(--purple); margin-bottom: 10px; }
+    .jd-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .jd-chip { display: flex; align-items: center; gap: 6px; background: var(--gray-bg); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .jd-section h4 { font-size: 12px; font-weight: 700; color: var(--text-light); letter-spacing: .5px; margin: 14px 0 6px; text-transform: uppercase; }
+    .jd-section ul { padding-left: 18px; }
+    .jd-section ul li { font-size: 13px; line-height: 1.8; }
+
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 16px; background: #fff; }
+    .why-card { background: var(--gray-bg); border-radius: 10px; padding: 16px; text-align: center; }
+    .why-card svg { display: block; margin: 0 auto 8px; }
+    .why-card .wc-title { font-size: 13px; font-weight: 700; }
+    .why-card .wc-sub { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+    footer { background: #f9f9f9; border-top: 1px solid var(--border); margin-top: 32px; }
+    .footer-contact { padding: 28px 20px; }
+    .footer-contact > p { font-size: 13px; color: var(--text-light); margin-bottom: 16px; }
+    .footer-help { font-size: 12px; color: var(--text-light); font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
+    .footer-phone { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .footer-phone span { font-size: 12px; color: var(--text-light); font-weight: 400; }
+    .footer-email { font-size: 14px; font-weight: 700; color: var(--purple); margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+    .footer-socials { display: flex; gap: 20px; margin: 20px 0 0; }
+    .footer-socials a { color: var(--text-light); font-size: 20px; text-decoration: none; transition: color .2s; }
+    .footer-socials a:hover { color: var(--purple); }
+    .footer-accordion { border-top: 1px solid var(--border); }
+    .footer-acc-item { border-bottom: 1px solid var(--border); }
+    .footer-acc-hdr { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; cursor: pointer; font-weight: 700; font-size: 15px; }
+    .footer-acc-hdr i { transition: transform .3s; }
+    .footer-acc-hdr.open i { transform: rotate(180deg); }
+    .footer-acc-body { display: none; padding: 0 20px 16px; }
+    .footer-acc-body.open { display: block; animation: fadeSlide .2s ease; }
+    .footer-acc-body a { display: block; padding: 6px 0; font-size: 14px; color: var(--text-light); text-decoration: none; }
+    .footer-acc-body a:hover { color: var(--purple); }
+    .footer-bottom { padding: 16px 20px; }
+    .payment-logos { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .pay-logo { padding: 4px 10px; border: 1.5px solid #ccc; border-radius: 5px; font-size: 12px; font-weight: 700; }
+    .pay-logo.visa { color: #1a1f71; } .pay-logo.mc { color: #eb001b; }
+    .pay-logo.mtn  { background: #ffcb00; border-color: #ffcb00; color: #000; }
+    .pay-logo.voda { background: #e60000; border-color: #e60000; color: #fff; }
+    .pay-logo.airtel { color: #ed1b24; }
+    .footer-copy { font-size: 11px; color: var(--text-light); margin-top: 10px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+    .scroll-top { position: fixed; bottom: 20px; right: 20px; background: var(--purple); color: var(--white); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(59,31,130,.35); transition: opacity .3s; z-index: 500; opacity: 0; border: none; }
+    .scroll-top.visible { opacity: 1; }
+
+    @media (min-width: 600px) { .hero h1 { font-size: 36px; } }
+
+    /* Drawer sub-menu */
+    .drawer-sub { max-height: 0; overflow: hidden; transition: max-height .35s ease; background: #f8f6ff; }
+    .drawer-sub.open { max-height: 800px; }
+    .drawer-sub-item { padding: 10px 20px 10px 48px; font-size: 13px; color: var(--purple); cursor: pointer; border-bottom: 1px solid #ede9ff; display: flex; align-items: center; gap: 8px; }
+    .drawer-sub-item:hover { background: #ede9ff; }
+    .drawer-chevron { transition: transform .3s; }
+    .drawer-chevron.open { transform: rotate(180deg); }
+
+    /* About / Contact HR page styles */
+    .inner-page { max-width: 700px; margin: 0 auto; padding: 20px 16px 40px; }
+    .inner-page .breadcrumb { font-size: 12px; color: var(--text-light); margin-bottom: 18px; display: flex; align-items: center; gap: 6px; }
+    .inner-page .breadcrumb span { cursor: pointer; color: var(--purple); font-weight: 600; }
+    .inner-page h1 { font-size: 26px; font-weight: 900; color: #1a1a1a; margin-bottom: 20px; }
+    .inner-page h2 { font-size: 16px; font-weight: 800; color: var(--purple); margin: 22px 0 8px; text-transform: uppercase; letter-spacing: .5px; }
+    .inner-page p { font-size: 14px; line-height: 1.85; color: #333; margin-bottom: 16px; }
+    .inner-page ul { margin: 0 0 16px 18px; }
+    .inner-page ul li { font-size: 14px; line-height: 2; color: #333; }
+    .branch-region { margin-bottom: 14px; }
+    .branch-region h3 { font-size: 13px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
+    .branch-region ul { margin: 0 0 0 16px; }
+    .branch-region ul li { font-size: 13.5px; line-height: 2; color: #444; }
+    .about-banner { background: var(--purple); color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .about-banner h2 { color: #fff; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+    .about-banner p { color: rgba(255,255,255,.85); margin: 0; font-size: 13px; line-height: 1.6; }
+    .contact-card { background: #fff; border: 1px solid #e8e2ff; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .contact-card h3 { font-size: 14px; font-weight: 800; color: var(--purple); margin: 0 0 12px; }
+    .contact-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 13.5px; color: #333; }
+    .contact-row svg { flex-shrink: 0; margin-top: 1px; }
+    .contact-row b { display: block; font-weight: 700; }
+    .contact-row span { color: var(--text-light); font-size: 12px; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="top-bar">
+  <i class="fa fa-phone-alt"></i>
+  Call us: <a href="tel:+233596911818">+233 59 691 1818</a> (8am–5pm)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="tel:+233561112777">+233 56 111 2777</a> (5pm–8am)
+</div>
+
+<header class="header">
+  <div class="logo-wrap" onclick="goHome()">
+    <img src="melcom.png" alt="Melcom" class="logo-img" id="logoImg"
+         onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'" />
+    <div class="logo-fallback" id="logoFallback">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+        <circle cx="15" cy="15" r="15" fill="#3b1f82"/>
+        <circle cx="15" cy="15" r="9" fill="white"/>
+        <circle cx="15" cy="15" r="4.5" fill="#e31837"/>
+      </svg>
+      <span style="font-size:26px;font-weight:900;color:var(--purple);letter-spacing:-1px;">melcom</span>
+    </div>
+  </div>
+  <div class="header-icons">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span onclick="openDrawer()" style="cursor:pointer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </span>
+  </div>
+</header>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span onclick="closeDrawer()" style="cursor:pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+  </div>
+  <div class="drawer-item highlight" onclick="goHome();closeDrawer()">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home / Careers
+    </div>
+  </div>
+  <div class="drawer-item external" onclick="window.open('https://melcom.com/?srsltid=AfmBOopt2Mz1UYsmREMWCcdHulRoT0H9Um27BPBvzAWIGq9_n6501KDA','_blank');closeDrawer()">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Visit Our Main Website
+    </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+  </div>
+  <div class="drawer-item" onclick="toggleDrawerJobs(this)" id="drawerJobsToggle">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Open Positions
+    </div>
+    <svg class="drawer-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="drawer-sub" id="drawerJobsList"></div>
+  <div class="drawer-item" onclick="showPage('pageAbout');closeDrawer()">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      About Melcom
+    </div>
+  </div>
+  <div class="drawer-item" onclick="showPage('pageContactHR');closeDrawer()">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Contact HR
+    </div>
+  </div>
+</div>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <div style="font-size:15px;color:var(--purple);font-weight:700;" id="spinnerText">Processing…</div>
+  <div class="spinner-sub" id="spinnerSub">Please wait. Do not close this page.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="20" height="20"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- HOME -->
+<div class="page active" id="pageHome">
+  <div class="hero">
+    <h1>Join the Melcom Family</h1>
+    <p>We are recruiting <strong>500 skilled workers</strong> across our branches in Ghana. Be part of Ghana's most trusted retail group.</p>
+    <div class="hero-stats">
+      <div class="stat-box"><div class="num" id="stat500">0</div><div class="lbl">Vacancies Available</div></div>
+      <div class="stat-box"><div class="num" id="appCount">0</div><div class="lbl">Applications Received</div></div>
+      <div class="stat-box"><div class="num" id="stat20">0</div><div class="lbl">Branch Locations</div></div>
+    </div>
+  </div>
+
+  <div class="notice-strip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" width="18" height="18" style="flex-shrink:0"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span><b>Be the first to apply!</b> — 0 applications received so far. Submit yours and get ahead.</span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-light);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secured by melcom.com
+    </span>
+  </div>
+
+  <div class="section-hdr"><span>Available Positions</span><span class="badge">17 Jobs</span></div>
+  <div class="jobs-grid" id="jobsGrid"></div>
+
+  <div class="section-hdr" style="margin-top:0;"><span>Why Work at Melcom?</span></div>
+  <div class="why-grid">
+    <div class="why-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="32" height="32"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <div class="wc-title">Competitive Salary</div><div class="wc-sub">Monthly salaries paid on time</div>
+    </div>
+    <div class="why-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="32" height="32"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <div class="wc-title">Training &amp; Growth</div><div class="wc-sub">On-the-job training provided</div>
+    </div>
+    <div class="why-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" width="32" height="32"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="wc-title">Nationwide Branches</div><div class="wc-sub">Accra, Kumasi, Takoradi &amp; more</div>
+    </div>
+    <div class="why-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" width="32" height="32"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div class="wc-title">Job Security</div><div class="wc-sub">Stable employment contract</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-contact">
+      <p>Apply at Melcom Careers for a rewarding employment opportunity in Ghana's leading retail group.</p>
+      <div class="footer-help">NEED HELP?</div>
+      <div class="footer-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+        +233 59 691 1818 <span>(8am–5pm)</span>
+      </div>
+      <div class="footer-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+        +233 56 111 2777 <span>(5pm–8am)</span>
+      </div>
+      <div class="footer-email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        careers@melcom.com
+      </div>
+      <div style="margin-top:6px;font-size:12px;color:var(--text-light);display:flex;align-items:center;gap:5px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <a href="https://melcom.com" target="_blank" style="color:var(--purple);">melcom.com</a>
+      </div>
+      <div class="footer-socials">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="footer-accordion">
+      <div class="footer-acc-item">
+        <div class="footer-acc-hdr" onclick="toggleAcc(this)">Information <i class="fa fa-chevron-down"></i></div>
+        <div class="footer-acc-body">
+          <a href="#">Privacy Policy</a><a href="#">Return &amp; Warranty Policy</a>
+          <a href="#">Terms And Conditions</a><a href="#">FAQ</a>
+        </div>
+      </div>
+      <div class="footer-acc-item">
+        <div class="footer-acc-hdr" onclick="toggleAcc(this)">Company <i class="fa fa-chevron-down"></i></div>
+        <div class="footer-acc-body">
+          <a href="#">About Us</a>
+          <a href="https://melcom.com" target="_blank">Corporate Website</a>
+          <a href="#">Store Finder</a><a href="#">Careers</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="payment-logos">
+        <span class="pay-logo visa">VISA</span>
+        <span class="pay-logo mc">Mastercard</span>
+        <span class="pay-logo mtn">MTN MoMo</span>
+        <span class="pay-logo voda">Vodafone</span>
+        <span class="pay-logo airtel">AirtelTigo</span>
+      </div>
+      <div class="footer-copy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        &copy; 2026 Melcom Ghana Ltd. All rights reserved. Secured by melcom.com
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- JOB DETAIL -->
+<div class="page" id="pageJobDetail">
+  <div class="job-detail-wrap">
+    <div style="margin-bottom:14px;">
+      <span onclick="goHome()" style="cursor:pointer;color:var(--purple);font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Jobs
+      </span>
+    </div>
+    <div class="job-detail-card">
+      <h2 id="jdTitle"></h2>
+      <div class="jd-meta">
+        <div class="jd-chip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Ghana (Multiple Branches)</div>
+        <div class="jd-chip" style="color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> <span id="jdSalary"></span></div>
+        <div class="jd-chip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Full-Time</div>
+        <div class="jd-chip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Immediate Hire</div>
+      </div>
+      <div class="jd-section">
+        <h4>About Melcom</h4>
+        <p style="font-size:13px;line-height:1.7;color:#555;">Melcom is Ghana's largest retail chain with over 40 stores nationwide. We offer quality products at unbeatable prices and are committed to excellent employment opportunities for Ghanaians.</p>
+        <h4>Role Overview</h4>
+        <p style="font-size:13px;line-height:1.7;color:#555;" id="jdOverview"></p>
+        <h4>Requirements</h4>
+        <ul id="jdReqs"></ul>
+        <h4>What We Offer</h4>
+        <ul>
+          <li>Competitive monthly salary paid on time</li>
+          <li>On-the-job training and development</li>
+          <li>Friendly and supportive work environment</li>
+          <li>Career growth opportunities within Melcom</li>
+          <li>Medical benefits</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notice-strip" style="border-radius:8px;margin-bottom:16px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span><b>0 applications received</b> — Be the first person to apply for this role!</span>
+    </div>
+    <div class="info-box">
+      <strong>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Application Note
+      </strong>
+      A non-refundable registration processing fee of <b>GH&#8373; 40.00</b> is required to complete your application. This covers administrative processing. Your application will be reviewed within <b>24 hours</b> of payment confirmation.
+    </div>
+    <button class="btn-primary" onclick="startApplication()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Apply Now — It's Quick!
+    </button>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<div class="page" id="pageStep1">
+  <div class="flow-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-labels"><span class="active">Personal Info</span><span>Education</span><span>Details</span><span>Payment</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:25%"></div></div>
+    </div>
+    <div class="step-heading">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Personal Information</h2>
+      <p>Please fill in your accurate personal details below.</p>
+    </div>
+    <div class="form-row">
+      <div class="form-group" id="fg-firstName"><label>First Name *</label><input type="text" id="firstName" placeholder="e.g. Kwame" /><div class="err">Please enter your first name</div></div>
+      <div class="form-group" id="fg-lastName"><label>Last Name *</label><input type="text" id="lastName" placeholder="e.g. Mensah" /><div class="err">Please enter your last name</div></div>
+    </div>
+    <div class="form-group" id="fg-email"><label>Email Address *</label><input type="email" id="email" placeholder="e.g. kwame@gmail.com" /><div class="err">Please enter a valid email address</div></div>
+    <div class="form-group" id="fg-phone"><label>Phone Number *</label><input type="tel" id="phone" placeholder="e.g. 0244123456" maxlength="10" /><div class="err">Enter a valid 10-digit Ghana phone number</div></div>
+    <div class="form-row">
+      <div class="form-group" id="fg-dob"><label>Date of Birth *</label><input type="date" id="dob" /><div class="err">Must be at least 18 years old</div></div>
+      <div class="form-group" id="fg-gender"><label>Gender *</label><select id="gender"><option value="">— Select —</option><option>Male</option><option>Female</option></select><div class="err">Please select your gender</div></div>
+    </div>
+    <div class="form-group" id="fg-nationality"><label>Nationality *</label><input type="text" id="nationality" placeholder="e.g. Ghanaian" /><div class="err">Please enter your nationality</div></div>
+    <div class="form-group" id="fg-address"><label>Residential Address *</label><input type="text" id="address" placeholder="e.g. Accra, New Town" /><div class="err">Please enter your address</div></div>
+    <div class="form-group" id="fg-region">
+      <label>Region *</label>
+      <select id="region">
+        <option value="">— Select Region —</option>
+        <option>Greater Accra</option><option>Ashanti</option><option>Western</option><option>Central</option>
+        <option>Volta</option><option>Eastern</option><option>Northern</option><option>Upper East</option>
+        <option>Upper West</option><option>Brong-Ahafo</option><option>Oti</option><option>Savannah</option>
+        <option>North East</option><option>Ahafo</option><option>Western North</option><option>Bono East</option>
+      </select>
+      <div class="err">Please select your region</div>
+    </div>
+    <button type="button" class="btn-primary" onclick="nextStep1()">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="page" id="pageStep2">
+  <div class="flow-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-labels"><span>Personal Info</span><span class="active">Education</span><span>Details</span><span>Payment</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:50%"></div></div>
+    </div>
+    <div class="step-heading">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="22" height="22"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Education &amp; Experience</h2>
+      <p>Tell us about your qualifications and work history.</p>
+    </div>
+    <div class="form-group" id="fg-education">
+      <label>Highest Education Level *</label>
+      <select id="education"><option value="">— Select —</option><option>BECE (Basic School)</option><option>WASSCE / SSSCE (SHS)</option><option>HND / Diploma</option><option>Bachelor's Degree</option><option>Master's Degree</option><option>No Formal Education</option></select>
+      <div class="err">Please select your education level</div>
+    </div>
+    <div class="form-group" id="fg-school"><label>School / Institution *</label><input type="text" id="school" placeholder="e.g. University of Ghana" /><div class="err">Please enter your school name</div></div>
+    <div class="form-group" id="fg-yearCompleted"><label>Year Completed *</label><input type="number" id="yearCompleted" placeholder="e.g. 2022" min="1980" max="2026" /><div class="err">Please enter a valid year (1980–2026)</div></div>
+    <div class="form-group" id="fg-experience">
+      <label>Years of Work Experience *</label>
+      <select id="experience"><option value="">— Select —</option><option>No Experience (Fresh Graduate)</option><option>Less than 1 year</option><option>1–2 years</option><option>3–5 years</option><option>6–10 years</option><option>More than 10 years</option></select>
+      <div class="err">Please select your experience level</div>
+    </div>
+    <div class="form-group"><label>Previous Employer <span style="font-weight:400;color:var(--text-light)">(if any)</span></label><input type="text" id="prevEmployer" placeholder="e.g. Shoprite Ghana" /></div>
+    <div class="form-group" id="fg-skills"><label>Key Skills *</label><textarea id="skills" placeholder="e.g. Customer service, cash handling, teamwork, computer skills…"></textarea><div class="err">Please list at least one skill</div></div>
+    <button type="button" class="btn-primary" onclick="nextStep2()">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button type="button" class="btn-back" onclick="showPage('pageJobDetail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="page" id="pageStep3">
+  <div class="flow-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-labels"><span>Personal Info</span><span>Education</span><span class="active">Details</span><span>Payment</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+    </div>
+    <div class="step-heading">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Additional Details</h2>
+      <p>A few more details to complete your profile.</p>
+    </div>
+    <div class="form-group" id="fg-availability"><label>Availability to Start *</label><select id="availability"><option value="">— Select —</option><option>Immediately</option><option>Within 1 week</option><option>Within 2 weeks</option><option>Within 1 month</option></select><div class="err">Please select your availability</div></div>
+    <div class="form-group" id="fg-preferredBranch">
+      <label>Preferred Branch Location *</label>
+      <select id="preferredBranch"><option value="">— Select —</option><option>Accra – Spintex</option><option>Accra – Osu</option><option>Accra – Tema</option><option>Accra – Achimota</option><option>Kumasi – Adum</option><option>Kumasi – Suame</option><option>Takoradi</option><option>Cape Coast</option><option>Ho</option><option>Koforidua</option><option>Tamale</option><option>Any Branch</option></select>
+      <div class="err">Please select a preferred branch</div>
+    </div>
+    <div class="form-group" id="fg-emergency"><label>Emergency Contact Name *</label><input type="text" id="emergency" placeholder="e.g. Ama Mensah (Sister)" /><div class="err">Please enter an emergency contact</div></div>
+    <div class="form-group" id="fg-emergencyPhone"><label>Emergency Contact Phone *</label><input type="tel" id="emergencyPhone" placeholder="e.g. 0201234567" maxlength="10" /><div class="err">Enter a valid 10-digit phone number</div></div>
+    <div class="form-group" id="fg-motivation"><label>Why do you want to work at Melcom? *</label><textarea id="motivation" placeholder="Tell us in a few sentences why you are a great fit…"></textarea><div class="err">Please tell us your motivation (at least 20 characters)</div></div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="12"/><line x1="15" y1="15" x2="12" y2="12"/></svg>
+        CV / Resume <span style="font-weight:400;color:var(--text-light);font-size:12px;">(Optional)</span>
+      </label>
+      <div id="cvDropZone" onclick="document.getElementById('cvFile').click()" style="border:2px dashed var(--border);border-radius:8px;padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--white);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5" width="36" height="36" style="margin:0 auto 8px;display:block;opacity:.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div id="cvDropLabel" style="font-size:13px;color:var(--text-light);">Click to upload your CV / Resume</div>
+        <div style="font-size:11px;color:#aaa;margin-top:4px;">PDF, DOC, DOCX — max 5 MB</div>
+      </div>
+      <input type="file" id="cvFile" accept=".pdf,.doc,.docx" style="display:none;" onchange="onCvSelected(this)" />
+      <div id="cvPreview" style="display:none;margin-top:8px;background:#f0f4ff;border:1px solid #c5d1ff;border-radius:7px;padding:10px 14px;display:none;align-items:center;gap:10px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span id="cvFileName" style="font-size:13px;color:var(--purple);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <span id="cvFileSize" style="font-size:11px;color:var(--text-light);white-space:nowrap;"></span>
+        <span onclick="removeCv()" style="cursor:pointer;color:var(--red);flex-shrink:0;" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+        <input type="checkbox" id="termsCheck" style="width:auto;margin-top:3px;" />
+        <span style="font-size:13px;">I confirm all information provided is accurate and I agree to the <a href="#" style="color:var(--purple)">Terms &amp; Conditions</a>. *</span>
+      </label>
+      <div class="err" id="termsErr" style="display:none;">You must agree to the terms to continue</div>
+    </div>
+    <button type="button" class="btn-primary" onclick="nextStep3()">Proceed to Submission <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    <button type="button" class="btn-back" onclick="showPage('pageStep2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+  </div>
+</div>
+
+<!-- STEP 4 — PAYMENT -->
+<div class="page" id="pageStep4">
+  <div class="flow-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-labels"><span>Personal Info</span><span>Education</span><span>Details</span><span class="active">Payment</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <div class="step-heading">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="22" height="22"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Registration Fee Payment</h2>
+      <p>One last step — complete your registration by paying the processing fee.</p>
+    </div>
+
+    <div class="info-box">
+      <strong><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Why is this fee required?</strong>
+      Melcom charges a one-time non-refundable administrative processing fee of <b>GH&#8373; 40.00</b> to verify your application, process your documents, and schedule your review. Only candidates who complete payment proceed to the screening stage.
+      <br/><br/>
+      <b>How to pay:</b> Enter your MTN MoMo, Vodafone Cash, or AirtelTigo Money number below. An STK push prompt will be sent to your phone — enter your Mobile Money PIN to confirm GH&#8373; 40.
+    </div>
+
+    <div class="payment-box">
+      <div class="amount-display">
+        <div class="amount">GH&#8373; 40</div>
+        <div class="curr">Registration Processing Fee — Non-Refundable</div>
+      </div>
+
+      <div class="pay-error-box" id="payErrorBox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="payErrorMsg">Payment failed. Please try again.</span>
+      </div>
+
+      <div class="form-group" id="fg-momoPhone">
+        <label>Mobile Money Phone Number *</label>
+        <input type="tel" id="momoPhone" placeholder="e.g. 0244123456" maxlength="10" inputmode="numeric" oninput="onMomoInput(this.value)" />
+        <div id="networkDetected" style="min-height:24px;margin-top:6px;"></div>
+        <div class="err">Enter a valid 10-digit Ghana mobile money number (MTN, Vodafone, or AirtelTigo)</div>
+      </div>
+
+      <div style="font-size:12px;color:var(--text-light);margin-bottom:20px;line-height:1.7;display:flex;align-items:flex-start;gap:6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Supported: MTN MoMo (024, 025, 053, 054, 055, 059) · Vodafone Cash (020, 050) · AirtelTigo (026, 027, 056, 057)</span>
+      </div>
+
+      <button class="btn-primary" onclick="completePay()" id="payBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Pay GH&#8373; 40 &amp; Complete Registration
+      </button>
+      <div class="secure-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Secured by Melcom Ghana Ltd &middot; melcom.com
+      </div>
+    </div>
+
+    <button type="button" class="btn-back" onclick="showPage('pageStep3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+    <div style="text-align:center;font-size:12px;color:var(--text-light);margin-top:16px;line-height:1.6;">
+      Having trouble? Call us: <b>+233 59 691 1818</b> or email <b>careers@melcom.com</b>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="page" id="pageSuccess">
+  <div class="success-wrap">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="48" height="48"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h2>Application Received!</h2>
+    <p>Thank you for applying to <strong>Melcom Ghana</strong>. Your application has been successfully submitted and your registration fee of <strong>GH&#8373; 40</strong> has been confirmed.</p>
+    <div class="ref-box">
+      <div style="font-size:12px;color:var(--text-light);margin-bottom:6px;">Application Reference Number</div>
+      <b id="refNumber">MLC-2026-000000</b>
+      <div style="font-size:12px;color:var(--text-light);margin-top:6px;">Save this number for future reference</div>
+    </div>
+    <p style="font-size:13px;color:var(--text-light);">Your application will be reviewed within <strong>24 hours</strong>. Our HR team will contact you via phone or email with next steps.</p>
+    <ul class="steps-list" style="margin-top:16px;">
+      <li>Application submitted &amp; fee confirmed</li>
+      <li>HR review within 24 hours</li>
+      <li>Phone or email interview invitation</li>
+      <li>In-person screening at nearest branch</li>
+      <li>Offer letter &amp; onboarding</li>
+    </ul>
+    <div style="background:#f0f4ff;border-radius:8px;padding:14px;margin-top:16px;font-size:12px;text-align:left;line-height:1.9;">
+      <div style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Confirmation email sent to your registered address.</div>
+      <div style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1 19.79 19.79 0 0 1 1.62 4.43 2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg> SMS confirmation sent to your mobile number.</div>
+    </div>
+    <div style="margin-top:20px;background:#fff8e1;border:1px solid var(--gold);border-radius:8px;padding:14px 16px;font-size:13px;text-align:left;display:flex;align-items:flex-start;gap:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" width="20" height="20" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span><b>Important:</b> Download your receipt below and present it at any nearest Melcom branch for your in-person screening. Keep it safe.</span>
+    </div>
+    <button class="btn-primary" onclick="downloadReceipt()" style="margin-top:16px;background:var(--success);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Download Receipt (PDF)
+    </button>
+    <div style="margin-top:16px;font-size:12px;color:var(--text-light);">Questions? <b>+233 59 691 1818</b> &nbsp;|&nbsp; <b>careers@melcom.com</b></div>
+    <div style="margin-top:14px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:12px;display:flex;align-items:center;justify-content:center;gap:4px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secured by melcom.com &nbsp;|&nbsp; &copy; 2026 Melcom Ghana Ltd.
+    </div>
+  </div>
+</div>
+
+<!-- ALREADY APPLIED -->
+<div class="page" id="pageAlready">
+  <div class="status-wrap">
+    <div class="status-icon" style="background:#fff8e1;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" width="40" height="40"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <h2 style="font-size:20px;font-weight:800;color:var(--purple);margin-bottom:12px;">Application Already Submitted</h2>
+    <p style="font-size:14px;color:var(--text-light);line-height:1.7;margin-bottom:20px;">Our records show you have already submitted an application from this device. Each applicant may only apply once per recruitment cycle.</p>
+    <div class="ref-box"><div style="font-size:12px;color:var(--text-light);margin-bottom:6px;">Your Reference Number</div><b id="alreadyRef">MLC-2026-000000</b></div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:20px;">Your application is being reviewed. Our HR team will reach out within <strong>24 hours</strong>.</p>
+    <button class="btn-primary" onclick="showPage('pageSuccess')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      View Application Status
+    </button>
+    <div style="margin-top:14px;font-size:12px;color:var(--text-light);">Need help? Call <b>+233 59 691 1818</b></div>
+  </div>
+</div>
+
+<!-- PAY NOW -->
+<div class="page" id="pagePayNow">
+  <div class="status-wrap">
+    <div class="status-icon" style="background:#fff0f0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" width="40" height="40"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <h2 style="font-size:20px;font-weight:800;color:var(--red);margin-bottom:12px;">Payment Not Completed</h2>
+    <p style="font-size:14px;color:var(--text-light);line-height:1.7;margin-bottom:20px;">You started an application but have not yet paid the registration fee of <strong>GH&#8373; 40.00</strong>. Your application cannot be processed until payment is confirmed.</p>
+    <div class="info-box">Your application <b>will not be reviewed</b> until the GH&#8373; 40 registration payment is confirmed. Please complete the payment to finalise your application.</div>
+    <button class="btn-primary" onclick="goToPayment()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pay GH&#8373; 40 Now
+    </button>
+    <div style="margin-top:14px;font-size:12px;color:var(--text-light);">Need help? Call <b>+233 59 691 1818</b></div>
+  </div>
+</div>
+
+<!-- ABOUT MELCOM -->
+<div class="page" id="pageAbout">
+  <div class="inner-page">
+    <div class="breadcrumb">
+      <span onclick="goHome()">Home</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+      About Melcom Ltd
+    </div>
+    <h1>About Melcom Ltd.</h1>
+    <p><strong>Melcom</strong> Limited is Ghana's largest chain of retail department stores. Our Head Office is located at 2nd Palace Link Road, North Industrial Area, Accra, Ghana. The major portion of our business is retail and we are also highly placed in semi-wholesale and wholesale distribution due to the vast range of goods we stock.</p>
+    <p>There are several contributing factors that have made Melcom the household name it is today. The Group is committed to providing:</p>
+    <ul>
+      <li>Great service with a smile</li>
+      <li>Unbeatable value for money</li>
+      <li>Quality merchandise</li>
+      <li>The largest variety of goods under one roof</li>
+    </ul>
+    <p>By sourcing products from all over the world, we are able to offer shoppers a huge range of extremely affordable goods, which leaves them spoilt for choice. Through perseverance, hard work and dedication from all levels of the vast workforce, it has been possible not only to identify and achieve these goals, but also to give ultimate consumer satisfaction, which is the essence of our existence. As society becomes more affluent, the needs and requirement standards of our esteemed and loyal customers change and grow. In keeping with the Group's continuous efforts to provide Ghana with the paramount shopping experience, we have also recognized the need to keep up with the shifts in consumer trends.</p>
+    <p>Today, Melcom maintains its position as the fastest growing chain store in Ghana, and boasts the largest number of outlets spread throughout the country.</p>
+    <p>Our 38 nationwide shops are situated in:</p>
+    <div class="branch-region">
+      <h3>Greater Accra Region</h3>
+      <ul>
+        <li>Accra Central Branch</li><li>Adabraka Branch</li><li>East Legon Branch</li>
+        <li>Melcom Plus &#8211; Kaneshie Branch</li><li>Dansoman Branch</li><li>Lapaz Branch</li>
+        <li>Melcom Plus &#8211; Spintex</li><li>Madina Branch</li><li>Kissieman Branch</li>
+        <li>Weija Branch</li><li>Ashongman Branch</li><li>Melcom Plus &#8211; Tema Branch</li>
+        <li>Ashaiman Branch</li><li>Teshie Nungua Branch</li><li>Achimota Branch</li>
+      </ul>
+    </div>
+    <div class="branch-region">
+      <h3>Central Region</h3>
+      <ul><li>Cape Coast Branch</li><li>Kasoa Branch</li><li>Assin Fosu Branch</li><li>Swedru Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Ashanti Region</h3>
+      <ul>
+        <li>Kumasi Adum Branch</li><li>Kumasi Adiebeba Branch</li><li>Kumasi Manhayia Branch</li>
+        <li>Kumasi Tanoso Abuakhwa Branch</li><li>Kumasi Hene Branch</li><li>Obuasi Branch</li>
+      </ul>
+    </div>
+    <div class="branch-region">
+      <h3>Eastern Region</h3>
+      <ul><li>Koforidua 1 Branch</li><li>Koforidua 2 Branch</li><li>Nkawkaw Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Volta Region</h3>
+      <ul><li>Ho Branch</li><li>Hohoe Branch</li><li>Aflao Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Brong-Ahafo Region</h3>
+      <ul><li>Sunyani Branch</li><li>Techiman Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Western Region</h3>
+      <ul><li>Takoradi Branch</li><li>Tarkwa Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Northern Region</h3>
+      <ul><li>Tamale Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Upper East Region</h3>
+      <ul><li>Bolgatanga Branch</li></ul>
+    </div>
+    <div class="branch-region">
+      <h3>Upper West Region</h3>
+      <ul><li>Wa Branch</li></ul>
+    </div>
+    <p>In keeping with the adopted policy of 'Low Prices and High Volumes', Melcom's market share in the retail business has grown steadily; and today, with over 15,000 items available under one roof, it is the leading departmental store in the country.</p>
+    <p>The vast selection of goods ranges from a simple plastic container to exquisite furniture, glassware to sophisticated plasma TVs: There is something for everyone and for every room in your home or office, with unbeatable prices and a vast array of International Brands. The majority of our plastic ware is manufactured by our sister company, Century Industries Limited.</p>
+    <p>Hand-in-hand with unforgettable shopping at Melcom is the use and enjoyment of one's purchases. Bearing this in mind and with emphasis on electronics, great importance has been placed on after-sales service, by way of a fully-equipped Service Center. Our other sister company, Crown*Star Electronics Industries Limited. Well-qualified and fully-trained engineers and technicians are always available to tackle all problems that may come up.</p>
+    <p>More information on all our sister companies can be found on our website.</p>
+    <p>Our management policies are very customer-oriented. Instances of this can be found in the fact that throughout the country, whether you are in the North, South, East or West of Ghana, Melcom's prices are uniform and our customer profile encompasses all segments of the society.</p>
+    <p>Melcom has continuously endeavoured to expand its customer base. The increasing number of branches, growing product range and rising market share are proof that the market strategies put into practice by the Melcom Group have been successful in reaching out to the Ghanaian people.</p>
+    <p>Melcom goes the extra mile in giving additional benefits to its esteemed clientele with its various discount and promotion schemes, and the constant enhancement or expansion of its numerous branches.</p>
+    <p>With no other retailer matching our shop network, variety or bargain prices, it is no wonder that slogans like: <strong>"The Cedi Saver"</strong>, "Your One-Stop Shop", "The House of Bargains", "Where Quality Costs Less", "Shop Simple, Shop Secured" and "Where Ghana Shops" have become synonymous with our business.</p>
+    <div class="about-banner" style="margin-top:28px;">
+      <h2>Now Hiring — 500 Positions</h2>
+      <p>Join Ghana's largest retail family. Be part of the team that keeps Ghana shopping. View open positions and apply today.</p>
+      <button class="btn-primary" onclick="goHome()" style="margin-top:14px;padding:10px 20px;font-size:13px;">View Open Positions</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT HR -->
+<div class="page" id="pageContactHR">
+  <div class="inner-page">
+    <div class="breadcrumb">
+      <span onclick="goHome()">Home</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+      Contact HR
+    </div>
+    <h1>Contact HR</h1>
+    <p style="color:var(--text-light);font-size:14px;margin-top:-8px;margin-bottom:24px;">Have questions about our recruitment process? Our HR team is here to help.</p>
+    <div class="contact-card">
+      <h3>Recruitment Hotlines</h3>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+        <div><b>+233 59 691 1818</b><span>Monday &#8211; Friday, 8:00am &#8211; 5:00pm</span></div>
+      </div>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+        <div><b>+233 56 111 2777</b><span>After hours &amp; weekends, 5:00pm &#8211; 8:00am</span></div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <h3>Email</h3>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><b>careers@melcom.com</b><span>For application inquiries and document submissions</span></div>
+      </div>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><b>order@melcom.com</b><span>General enquiries and corporate communications</span></div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <h3>Head Office Address</h3>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div><b>2nd Palace Link Road</b><span>North Industrial Area, Accra, Ghana</span></div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <h3>HR Office Hours</h3>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div><b>Monday &#8211; Friday</b><span>8:00am &#8211; 5:00pm</span></div>
+      </div>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div><b>Saturday</b><span>9:00am &#8211; 1:00pm (limited staff)</span></div>
+      </div>
+      <div class="contact-row" style="margin-bottom:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div style="color:#aaa;"><b>Sunday</b><span>Closed</span></div>
+      </div>
+    </div>
+    <div class="contact-card" style="background:#f8f6ff;">
+      <h3>Frequently Asked Questions</h3>
+      <div style="font-size:13.5px;color:#333;line-height:1.8;">
+        <p style="margin-bottom:10px;"><strong>How long does the recruitment process take?</strong><br>Typically 3&#8211;7 business days from application submission to interview invitation.</p>
+        <p style="margin-bottom:10px;"><strong>Is the GH&#8373; 40 registration fee refundable?</strong><br>No. The registration fee covers processing costs and is non-refundable regardless of outcome.</p>
+        <p style="margin-bottom:10px;"><strong>Can I apply for more than one position?</strong><br>No. Please select the position that best matches your skills. Each applicant may only apply once per recruitment cycle.</p>
+        <p style="margin-bottom:0;"><strong>Where do I go for my screening?</strong><br>Present your receipt at any nearest Melcom branch. Our HR team will contact you with specific instructions.</p>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goHome()" style="width:100%;margin-top:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      View Open Positions
+    </button>
+  </div>
+</div>
+
+<script>
+const BACKEND = 'https://backend-sp4e.onrender.com';
+
+const JOBS = [
+  { id:'supervisor',    title:'Supervisor',               salary:'GHS 2,500/month', dept:'Operations', overview:'Oversee daily store operations, manage floor staff, ensure quality customer service standards, and report to the Branch Manager.',    reqs:['WASSCE or higher','At least 2 years retail experience','Strong leadership skills','Good communication skills'] },
+  { id:'wh-super',      title:'Warehouse Supervisor',      salary:'GHS 1,500/month', dept:'Warehouse',  overview:'Supervise warehouse operations, coordinate stock movement, manage receiving and dispatch of goods, and maintain accurate records.',    reqs:['SHS / HND preferred','At least 1 year warehouse experience','Organisational skills','Team management ability'] },
+  { id:'sales-audit',   title:'Sales Auditor',             salary:'GHS 875/month',   dept:'Finance',    overview:'Audit daily sales transactions, verify receipts and invoices, identify discrepancies, and prepare audit reports.',                    reqs:['HND or Degree in Accounting/Finance','Attention to detail','Basic computer skills','Integrity and honesty'] },
+  { id:'buyer',         title:'Buyer / Procurement Officer',salary:'GHS 6,000/month', dept:'Procurement',overview:'Source and procure goods for Melcom stores, negotiate with suppliers, manage purchase orders, and ensure timely delivery.',           reqs:['Degree in Supply Chain or Business','At least 3 years procurement experience','Negotiation skills','Knowledge of import processes'] },
+  { id:'pa',            title:'Personal Assistant',         salary:'GHS 5,000/month', dept:'Admin',      overview:'Provide administrative support to senior management, manage schedules, prepare correspondence, and coordinate meetings.',            reqs:['Diploma or Degree in Business Admin','Excellent written and verbal communication','Proficiency in MS Office','Discretion and professionalism'] },
+  { id:'it-support',    title:'IT Support Officer',         salary:'GHS 4,500/month', dept:'IT',         overview:'Provide technical support for hardware and software, troubleshoot IT issues, and maintain network infrastructure across branches.',    reqs:['Degree or HND in IT','Networking and hardware knowledge','Problem-solving ability','Customer support experience'] },
+  { id:'cashier',       title:'Cashier',                    salary:'GHS 1,500/month', dept:'Sales',      overview:'Process customer transactions accurately, handle cash and mobile money payments, issue receipts, and provide excellent checkout experience.',reqs:['WASSCE minimum','Basic numeracy skills','Honesty and integrity','Friendly and customer-focused attitude'] },
+  { id:'sales-asst',    title:'Sales Assistant',            salary:'GHS 5,400/month', dept:'Sales',      overview:'Assist customers in finding products, maintain product displays, process sales, and keep the sales floor clean and well-stocked.',       reqs:['WASSCE or higher','Customer service attitude','Product knowledge','Team player'] },
+  { id:'sales-rep',     title:'Sales Representative',       salary:'GHS 2,800/month', dept:'Sales',      overview:'Promote and sell Melcom products, achieve sales targets, build customer relationships, and generate leads.',                         reqs:['SHS / HND minimum','At least 1 year sales experience','Persuasion and communication skills','Target-driven mindset'] },
+  { id:'cust-svc',      title:'Customer Service Officer',   salary:'GHS 2,200/month', dept:'Service',    overview:'Handle customer enquiries, resolve complaints, process returns and exchanges, and ensure customer satisfaction across branches.',       reqs:['WASSCE or higher','Excellent communication skills','Patience and empathy','Conflict resolution skills'] },
+  { id:'storekeeper',   title:'Storekeeper',                salary:'GHS 2,500/month', dept:'Warehouse',  overview:'Manage store inventory, receive and record incoming stock, issue stock to the sales floor, and conduct regular stock counts.',         reqs:['SHS / HND preferred','Inventory management skills','Basic computer literacy','Attention to detail'] },
+  { id:'wh-worker',     title:'Warehouse Worker',            salary:'GHS 625/month',   dept:'Warehouse',  overview:'Load and unload goods, move stock within the warehouse, assist with stock-taking, and maintain warehouse cleanliness.',               reqs:['BECE minimum','Physical fitness','Ability to lift heavy items','Reliability and punctuality'] },
+  { id:'driver',        title:'Driver',                     salary:'GHS 3,500/month', dept:'Logistics',  overview:'Transport goods and personnel between Melcom branches and warehouses safely and on time. Maintain vehicle logs.',                     reqs:['Valid Ghana driving licence (Class C+)','At least 3 years driving experience','Knowledge of Ghana road network','Clean driving record'] },
+  { id:'security',      title:'Security Guard',             salary:'GHS 1,800/month', dept:'Security',   overview:'Protect Melcom premises, customers, and assets. Monitor CCTV, control access points, and respond to security incidents.',              reqs:['BECE minimum','Security training certificate preferred','Physical fitness','Alertness and integrity'] },
+  { id:'cleaner',       title:'Cleaner',                    salary:'GHS 1,200/month', dept:'Facilities', overview:'Maintain cleanliness and hygiene across store areas including sales floor, restrooms, offices, and common areas.',                  reqs:['BECE minimum','Reliability and punctuality','Attention to cleanliness','Willingness to work shifts'] },
+  { id:'porter',        title:'Porter / Store Attendant',   salary:'GHS 1,200/month', dept:'Operations', overview:'Assist customers with carrying items, arrange products on shelves, support cashiers during busy periods, and maintain a tidy store.',  reqs:['BECE minimum','Physical fitness','Friendly attitude','Team player'] },
+  { id:'accountant',    title:'Accountant',                 salary:'GHS 9,000/month', dept:'Finance',    overview:'Prepare financial statements, manage payroll, reconcile accounts, ensure tax compliance, and support auditing processes.',              reqs:['Degree in Accounting or Finance','ICAG/ACCA preferred','Proficiency in accounting software','At least 2 years experience'] },
+];
+
+const NETWORK_MAP = { MTN:['024','025','053','054','055','059'], VODAFONE:['020','050'], AIRTELTIGO:['026','027','056','057'] };
+function detectNetwork(phone) {
+  let d = phone.replace(/\D/g,'');
+  if (d.startsWith('233')) d = '0' + d.slice(3);
+  const p = d.substring(0,3);
+  for (const [net, pxs] of Object.entries(NETWORK_MAP)) { if (pxs.includes(p)) return net; }
+  return null;
+}
+function networkLabel(n) { return n==='MTN'?'MTN MoMo': n==='VODAFONE'?'Vodafone Cash': n==='AIRTELTIGO'?'AirtelTigo Money': null; }
+function networkClass(n) { return n==='MTN'?'mtn': n==='VODAFONE'?'voda': n==='AIRTELTIGO'?'airtel': 'unknown'; }
+
+function onCvSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) { showToast('File too large — maximum is 5 MB', 'error'); input.value=''; return; }
+  const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowed.includes(file.type) && !file.name.match(/\.(pdf|doc|docx)$/i)) { showToast('Only PDF, DOC, or DOCX files are allowed', 'error'); input.value=''; return; }
+  const sizeMB = (file.size / (1024*1024)).toFixed(2);
+  document.getElementById('cvFileName').textContent = file.name;
+  document.getElementById('cvFileSize').textContent = sizeMB + ' MB';
+  document.getElementById('cvPreview').style.display = 'flex';
+  document.getElementById('cvDropZone').style.display = 'none';
+}
+function removeCv() {
+  document.getElementById('cvFile').value = '';
+  document.getElementById('cvPreview').style.display = 'none';
+  document.getElementById('cvDropZone').style.display = 'block';
+}
+
+function onMomoInput(val) {
+  const el = document.getElementById('networkDetected');
+  if (!el) return;
+  if (val.length < 3) { el.innerHTML=''; return; }
+  const net = detectNetwork(val);
+  el.innerHTML = net
+    ? `<span class="net-badge ${networkClass(net)}">${networkLabel(net)} detected</span>`
+    : `<span class="net-badge unknown">Unknown network — use MTN, Vodafone, or AirtelTigo</span>`;
+}
+
+function getStorage() { try { return JSON.parse(localStorage.getItem('melcom_career')||'null'); } catch(e){ return null; } }
+function setStorage(o) { localStorage.setItem('melcom_career', JSON.stringify(o)); }
+
+function showPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function goHome() {
+  const s = getStorage();
+  if (s && s.paid) { document.getElementById('refNumber').textContent=s.ref; document.getElementById('alreadyRef').textContent=s.ref; showPage('pageAlready'); return; }
+  showPage('pageHome');
+}
+function goToPayment() { showPage('pageStep4'); }
+
+function renderJobs() {
+  document.getElementById('jobsGrid').innerHTML = JOBS.map((j,i) => `
+    <div class="job-card" onclick="openJob('${j.id}')">
+      ${i===0?'<div class="hot-badge">HOT</div>':''}
+      <div class="dept-tag">${j.dept}</div>
+      <h3>${j.title}</h3>
+      <div class="job-salary"><svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="13" height="13"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>${j.salary}</div>
+      <div class="job-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Ghana · Full-Time · Immediate</div>
+      <button class="btn-apply">Apply Now</button>
+    </div>`).join('');
+}
+
+function openJob(id) {
+  const s = getStorage();
+  if (s && s.paid) { document.getElementById('refNumber').textContent=s.ref; document.getElementById('alreadyRef').textContent=s.ref; showPage('pageAlready'); return; }
+  if (s && !s.paid) { showPage('pagePayNow'); return; }
+  const job = JOBS.find(j=>j.id===id); if (!job) return;
+  selectedJob = job;
+  document.getElementById('jdTitle').textContent = job.title;
+  document.getElementById('jdSalary').textContent = job.salary;
+  document.getElementById('jdOverview').textContent = job.overview;
+  document.getElementById('jdReqs').innerHTML = job.reqs.map(r=>`<li>${r}</li>`).join('');
+  showPage('pageJobDetail');
+}
+
+let selectedJob = null;
+
+function startApplication() {
+  const s = getStorage();
+  if (s && s.paid) { document.getElementById('refNumber').textContent=s.ref; document.getElementById('alreadyRef').textContent=s.ref; showPage('pageAlready'); return; }
+  if (s && !s.paid) { showPage('pageStep4'); return; }
+  showPage('pageStep1');
+}
+
+function vf(id, fn) {
+  const el=document.getElementById(id), fg=document.getElementById('fg-'+id);
+  if (!el||!fg) return true;
+  const errEl = fg.querySelector('.err');
+  if (errEl && !errEl.dataset.orig) errEl.dataset.orig = errEl.textContent;
+  const ok=fn(el.value.trim());
+  if (ok) {
+    fg.classList.remove('invalid'); fg.classList.add('valid');
+    if (errEl) errEl.textContent = 'Looks good!';
+  } else {
+    fg.classList.add('invalid'); fg.classList.remove('valid');
+    if (errEl && errEl.dataset.orig) errEl.textContent = errEl.dataset.orig;
+  }
+  return ok;
+}
+function isPhone(v) { return /^0[2-9]\d{8}$/.test(v); }
+function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function nextStep1() {
+  let ok = true;
+  ok = vf('firstName', v=>v.length>=2) && ok;
+  ok = vf('lastName',  v=>v.length>=2) && ok;
+  ok = vf('email',     v=>isEmail(v))  && ok;
+  ok = vf('phone',     v=>isPhone(v))  && ok;
+  const dob=document.getElementById('dob').value, fgDob=document.getElementById('fg-dob');
+  const age=dob?(new Date()-new Date(dob))/(365.25*24*3600*1000):0;
+  if (!dob||age<18){fgDob.classList.add('invalid');ok=false;}else{fgDob.classList.remove('invalid');}
+  ok = vf('gender',v=>v!=='') && ok;
+  ok = vf('nationality',v=>v.length>=2) && ok;
+  ok = vf('address',v=>v.length>=5) && ok;
+  ok = vf('region',v=>v!=='') && ok;
+  if (!ok){showToast('Please fix the highlighted fields','error');return;}
+  showPage('pageStep2');
+}
+function nextStep2() {
+  let ok = true;
+  ok = vf('education',v=>v!=='') && ok;
+  ok = vf('school',v=>v.length>=2) && ok;
+  const yr=parseInt(document.getElementById('yearCompleted').value), fgYr=document.getElementById('fg-yearCompleted');
+  if (!yr||yr<1980||yr>2026){fgYr.classList.add('invalid');ok=false;}else{fgYr.classList.remove('invalid');}
+  ok = vf('experience',v=>v!=='') && ok;
+  ok = vf('skills',v=>v.length>=3) && ok;
+  if (!ok){showToast('Please fix the highlighted fields','error');return;}
+  showPage('pageStep3');
+}
+function nextStep3() {
+  let ok = true;
+  ok = vf('availability',v=>v!=='') && ok;
+  ok = vf('preferredBranch',v=>v!=='') && ok;
+  ok = vf('emergency',v=>v.length>=2) && ok;
+  ok = vf('emergencyPhone',v=>isPhone(v)) && ok;
+  ok = vf('motivation',v=>v.length>=20) && ok;
+  const tc=document.getElementById('termsCheck'), tcErr=document.getElementById('termsErr');
+  if (!tc.checked){tcErr.style.display='block';ok=false;}else{tcErr.style.display='none';}
+  if (!ok){showToast('Please fix the highlighted fields','error');return;}
+  const ref='MLC-2026-'+Math.floor(100000+Math.random()*900000);
+  setStorage({ paid:false, ref, job:selectedJob?selectedJob.title:'N/A', name:(document.getElementById('firstName').value+' '+document.getElementById('lastName').value).trim(), phone:document.getElementById('phone').value });
+  showPage('pageStep4');
+}
+
+// ── REAL PAYMENT FLOW ──────────────────────────────────────────────────────────
+function showPayError(msg) {
+  document.getElementById('payErrorMsg').textContent = msg;
+  document.getElementById('payErrorBox').classList.add('show');
+}
+function hidePayError() { document.getElementById('payErrorBox').classList.remove('show'); }
+
+let pollTimer = null;
+
+async function completePay() {
+  hidePayError();
+  const phone = document.getElementById('momoPhone').value.trim();
+  const fgMomo = document.getElementById('fg-momoPhone');
+  const payBtn  = document.getElementById('payBtn');
+
+  if (!isPhone(phone)) { fgMomo.classList.add('invalid'); showToast('Enter a valid 10-digit mobile money number','error'); return; }
+  fgMomo.classList.remove('invalid');
+
+  const network = detectNetwork(phone);
+  if (!network) {
+    fgMomo.classList.add('invalid');
+    showPayError('This number is not on a supported network. Please use MTN MoMo (024/025/053/054/055/059), Vodafone Cash (020/050), or AirtelTigo (026/027/056/057).');
+    return;
+  }
+
+  const s = getStorage() || {};
+  const name = s.name || 'Melcom Applicant';
+  payBtn.disabled = true;
+
+  setSpinner('Connecting to ' + networkLabel(network) + '…', 'Please wait. Do not close this page.');
+  document.getElementById('spinnerOverlay').classList.add('show');
+
+  let chargeData;
+  try {
+    const res = await fetch(`${BACKEND}/charge`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ amount:40, phoneNumber:phone, network, name }),
+    });
+    chargeData = await res.json();
+
+    if (!res.ok || !chargeData.success) {
+      hideSpinner(); payBtn.disabled = false;
+      const msg = chargeData?.error || chargeData?.message || 'Payment initiation failed. Please try again.';
+      showPayError(msg); showToast(msg,'error',5000);
+      return;
+    }
+  } catch(err) {
+    hideSpinner(); payBtn.disabled = false;
+    const msg = 'Connection error. Please check your internet and try again.';
+    showPayError(msg); showToast(msg,'error',5000);
+    return;
+  }
+
+  const txId = chargeData.transactionId;
+  setSpinner('STK push sent to ' + networkLabel(network) + '…', 'Check your phone — enter your PIN to confirm GH\u20B5 40.');
+  pollStatus(txId, phone, network, name, s, payBtn, 0);
+}
+
+function pollStatus(txId, phone, network, name, s, payBtn, n) {
+  const MAX = 24;
+  if (n >= MAX) {
+    hideSpinner(); payBtn.disabled = false;
+    const msg = 'Payment timed out. You may have cancelled or taken too long. Please try again.';
+    showPayError(msg); showToast(msg,'error',6000);
+    return;
+  }
+  clearTimeout(pollTimer);
+  pollTimer = setTimeout(async () => {
+    try {
+      const res  = await fetch(`${BACKEND}/status/${txId}`);
+      const data = await res.json();
+      const status = (data.status||'').toUpperCase();
+
+      if (status === 'SUCCESSFUL') {
+        hideSpinner();
+        s.paid=true; s.momoPhone=phone; s.network=network; s.transactionId=txId;
+        if (!s.ref) s.ref='MLC-2026-'+Math.floor(100000+Math.random()*900000);
+        setStorage(s);
+        document.getElementById('refNumber').textContent  = s.ref;
+        document.getElementById('alreadyRef').textContent = s.ref;
+        document.getElementById('appCount').textContent   = 1;
+        showToast('Payment confirmed! GH\u20B5 40 received.','success',4000);
+        showPage('pageSuccess');
+        return;
+      }
+      if (status === 'FAILED') {
+        hideSpinner(); payBtn.disabled = false;
+        const msg = data.errorMessage || 'Payment was declined or cancelled. Please try again.';
+        showPayError(msg); showToast(msg,'error',6000);
+        return;
+      }
+      if (n === 6) setSpinner('Awaiting your PIN confirmation…','Please approve the payment request on your phone.');
+      pollStatus(txId, phone, network, name, s, payBtn, n+1);
+    } catch(_) { pollStatus(txId, phone, network, name, s, payBtn, n+1); }
+  }, 3000);
+}
+
+function downloadReceipt() {
+  const s = getStorage() || {};
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pw = 210, ph = 297;
+  const purple = [59,31,130], green = [26,127,60], red = [227,24,55], gold = [212,130,10];
+
+  // Header band
+  doc.setFillColor(...purple);
+  doc.rect(0, 0, pw, 48, 'F');
+
+  // Try Melcom logo
+  const imgEl = document.getElementById('logoImg');
+  if (imgEl && imgEl.complete && imgEl.naturalWidth > 0) {
+    try { doc.addImage(imgEl, 'PNG', 12, 8, 38, 28); } catch(e) {}
+  } else {
+    // Fallback: draw circle + text logo
+    doc.setFillColor(255,255,255);
+    doc.circle(26, 22, 14, 'F');
+    doc.setFillColor(...red);
+    doc.circle(26, 22, 8, 'F');
+    doc.setFillColor(...purple);
+    doc.circle(26, 22, 4, 'F');
+  }
+
+  // Header text
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('MELCOM GHANA', 58, 20);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('Application Payment Receipt', 58, 28);
+  doc.text('www.melcom.com  |  careers@melcom.com', 58, 35);
+  doc.text('+233 59 691 1818  |  +233 56 111 2777', 58, 41);
+
+  // Confirmed badge (top-right)
+  doc.setFillColor(...green);
+  doc.roundedRect(140, 10, 58, 28, 3, 3, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text('PAYMENT CONFIRMED', 169, 21, {align:'center'});
+  doc.setFontSize(15);
+  doc.text('GH\u20B5 40.00', 169, 32, {align:'center'});
+
+  // Reference box
+  doc.setFillColor(237, 232, 255);
+  doc.roundedRect(12, 56, pw-24, 20, 3, 3, 'F');
+  doc.setTextColor(...purple);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('Reference Number', 20, 64);
+  doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text(s.ref || 'MLC-2026-000000', 20, 72);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.setTextColor(100,100,100);
+  const now = new Date();
+  doc.text('Issued: ' + now.toLocaleString('en-GH'), 160, 64);
+  doc.text('Valid: Present at any Melcom Branch', 150, 72);
+
+  // Divider
+  doc.setDrawColor(...purple); doc.setLineWidth(0.5);
+  doc.line(12, 82, pw-12, 82);
+
+  // Applicant details section
+  const col1 = 12, col2 = 112, rowH = 10;
+  let y = 92;
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...purple);
+  doc.text('APPLICANT DETAILS', col1, y); y += 8;
+
+  const details = [
+    ['Full Name', s.name || 'N/A'],
+    ['Job Applied For', s.job || 'N/A'],
+    ['Contact Phone', s.phone || 'N/A'],
+    ['MoMo Number', s.momoPhone || 'N/A'],
+    ['Network', s.network ? (s.network==='MTN'?'MTN MoMo':s.network==='VODAFONE'?'Vodafone Cash':'AirtelTigo Money') : 'N/A'],
+    ['Transaction ID', s.transactionId || 'N/A'],
+  ];
+
+  details.forEach(([label, value]) => {
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100);
+    doc.text(label, col1, y);
+    doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+    doc.text(value, col1, y+5);
+    y += rowH + 2;
+  });
+
+  // Payment summary box
+  y += 4;
+  doc.setFillColor(240,244,255);
+  doc.roundedRect(12, y, pw-24, 40, 3, 3, 'F');
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...purple);
+  doc.text('PAYMENT SUMMARY', 20, y+9);
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+  doc.text('Fee Type:', 20, y+18);  doc.setFont('helvetica','bold'); doc.text('Registration / Processing Fee (Non-Refundable)', 55, y+18);
+  doc.setFont('helvetica','normal'); doc.text('Amount Paid:', 20, y+26);  doc.setFont('helvetica','bold'); doc.text('GH\u20B5 40.00', 55, y+26);
+  doc.setFont('helvetica','normal'); doc.text('Payment Method:', 20, y+34); doc.setFont('helvetica','bold'); doc.text('Mobile Money (MoMo)', 55, y+34);
+  y += 48;
+
+  // Next steps
+  doc.setFillColor(232,245,233);
+  doc.roundedRect(12, y, pw-24, 54, 3, 3, 'F');
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...green);
+  doc.text('NEXT STEPS', 20, y+9);
+  const steps = ['1. Your application is now confirmed and under review.','2. HR team will contact you within 24 hours.','3. You will receive an interview/screening invitation.','4. Present this receipt at your nearest Melcom branch.','5. Attend in-person screening as scheduled.'];
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(40,40,40);
+  steps.forEach((step, i) => { doc.text(step, 20, y+18+(i*8)); });
+  y += 62;
+
+  // Important notice
+  doc.setFillColor(255,248,225);
+  doc.setDrawColor(...gold); doc.setLineWidth(0.8);
+  doc.roundedRect(12, y, pw-24, 22, 3, 3, 'FD');
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...gold);
+  doc.text('IMPORTANT:', 20, y+9);
+  doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+  doc.text('Present this PDF receipt at any nearest Melcom branch during your screening appointment.', 52, y+9);
+  doc.text('Do not share your reference number with anyone. This receipt is for your use only.', 20, y+17);
+  y += 30;
+
+  // Footer
+  doc.setFillColor(...purple);
+  doc.rect(0, ph-22, pw, 22, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('Melcom Ghana Ltd.  |  www.melcom.com  |  careers@melcom.com  |  +233 59 691 1818', pw/2, ph-13, {align:'center'});
+  doc.text('\u00A9 2026 Melcom Ghana Ltd. All rights reserved. This is an official payment receipt.', pw/2, ph-7, {align:'center'});
+
+  doc.save('Melcom_Application_Receipt_' + (s.ref || 'receipt') + '.pdf');
+  showToast('Receipt downloaded!', 'success', 3000);
+}
+
+function setSpinner(title, sub) {
+  document.getElementById('spinnerText').textContent = title;
+  document.getElementById('spinnerSub').textContent  = sub;
+}
+function hideSpinner() { document.getElementById('spinnerOverlay').classList.remove('show'); }
+function showToast(msg, type='info', dur=3500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => { t.className='toast'; }, dur);
+}
+function openDrawer()  { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
+function toggleAcc(hdr) {
+  const body=hdr.nextElementSibling, isOpen=body.classList.contains('open');
+  document.querySelectorAll('.footer-acc-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.footer-acc-hdr').forEach(h=>h.classList.remove('open'));
+  if (!isOpen) { body.classList.add('open'); hdr.classList.add('open'); }
+}
+window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('visible', window.scrollY>200); });
+
+function animateStat(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function toggleDrawerJobs(btn) {
+  const sub = document.getElementById('drawerJobsList');
+  const chev = btn.querySelector('.drawer-chevron');
+  const isOpen = sub.classList.contains('open');
+  sub.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+function renderDrawerJobs() {
+  const sub = document.getElementById('drawerJobsList');
+  if (!sub) return;
+  sub.innerHTML = JOBS.map(j => `
+    <div class="drawer-sub-item" onclick="openJob('${j.id}');closeDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+      ${j.title} <span style="margin-left:auto;font-size:11px;color:var(--success);font-weight:700;">${j.salary}</span>
+    </div>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderJobs();
+  renderDrawerJobs();
+  animateStat('stat500', 500, '', 1800);
+  animateStat('stat20', 20, '+', 1200);
+  const s = getStorage();
+  if (s && s.paid) {
+    document.getElementById('refNumber').textContent  = s.ref;
+    document.getElementById('alreadyRef').textContent = s.ref;
+    document.getElementById('appCount').textContent   = 1;
+  }
+});
+</script>
+</body>
+</html>
